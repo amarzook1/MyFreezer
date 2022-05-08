@@ -1,5 +1,14 @@
-version: '3'
+version: '3.5'
 services:
+  app: # Java Springboot Backend  
+    build: .
+    container_name: storage-application
+    ports:
+      - 8085:8080
+    depends_on:
+      - "database"
+    networks:
+      - storage_db_network
   database:
     build:
         context: database
@@ -20,3 +29,5 @@ services:
       author: "Ahmed Marzook"
 volumes:
   database-data: # named volumes can be managed easier using docker-compose
+networks:
+  storage_db_network:

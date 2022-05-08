@@ -11,12 +11,13 @@ import java.time.LocalDateTime;
 @Data
 @NoArgsConstructor
 @Entity
-@Table(name="food_items", schema = "public")
-public class FoodItem {
+@Table(name="freezer_storage", schema = "public")
+public class FreezerStorageItem {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long foodItemId;
+    @Column(name = "freezer_storage_item_id", unique = true, nullable = false)
+    private Long freezerStorageItemId;
 
     @Column(name="name", nullable=false, unique=false)
     private String name;

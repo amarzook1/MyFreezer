@@ -1,6 +1,6 @@
 package com.myfreezer.controllers;
 
-import com.myfreezer.entities.FoodItem;
+import com.myfreezer.entities.FreezerStorageItem;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -15,7 +15,7 @@ public class FoodInventoryController {
     }
 
     @PostMapping("/food/search")
-    public FoodItem getFoodItem(){
+    public FreezerStorageItem getFoodItem(){
 
         return null;
     }

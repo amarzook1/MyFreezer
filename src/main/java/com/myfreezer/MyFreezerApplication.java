@@ -1,6 +1,5 @@
 package com.myfreezer;
 
-import com.myfreezer.entities.FoodItem;
 import com.myfreezer.repositories.FoodItemRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;

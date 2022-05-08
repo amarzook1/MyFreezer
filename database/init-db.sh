@@ -56,8 +56,8 @@ main() {
 init_user_and_db() {
   psql -v ON_ERROR_STOP=1 --username "$POSTGRES_USER" <<-EOSQL
      ALTER USER postgres WITH PASSWORD 'pa55word';
-     CREATE ROLE storageFreezer WITH PASSWORD 'freezer' SUPERUSER LOGIN;
-     CREATE DATABASE storage_freezer_db WITH OWNER = storageFreezer ENCODING = 'UTF8';
+     CREATE ROLE storageUser WITH PASSWORD 'freezer' SUPERUSER LOGIN;
+     CREATE DATABASE storage_db WITH OWNER = storageuser ENCODING = 'UTF8';
 EOSQL
 }
 
