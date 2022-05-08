@@ -1,0 +1,22 @@
+version: '3'
+services:
+  database:
+    build:
+        context: database
+    image: postgres-14-database
+    container_name: postgres14.2-db-myfreezer 
+    restart: always
+    environment:
+        - POSTGRES_HOST_AUTH_METHOD=trust
+    healthcheck:
+      interval: 10s
+      timeout: 10s
+      retries: 10
+    ports:
+        - 5434:5432
+    volumes:
+      - database-data:/var/lib/postgresql/data/ # persist data even if container shuts down
+    labels:
+      author: "Ahmed Marzook"
+volumes:
+  database-data: # named volumes can be managed easier using docker-compose
