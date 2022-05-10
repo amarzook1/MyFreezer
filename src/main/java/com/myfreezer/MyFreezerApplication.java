@@ -11,9 +11,6 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 @EnableJpaRepositories(basePackages = "com.myfreezer.repositories")
 public class MyFreezerApplication implements CommandLineRunner {
 
-	@Autowired
-	private FoodItemRepository foodItemRepository;
-
 	public static void main(String[] args) {
 		SpringApplication.run(MyFreezerApplication.class, args);
 	}

@@ -1,22 +1,33 @@
 package com.myfreezer.controllers;
 
 import com.myfreezer.entities.FreezerStorageItem;
+import com.myfreezer.exceptions.NotFoundException;
+import com.myfreezer.models.FoodRequest;
 import com.myfreezer.models.QuerySearch;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import com.myfreezer.services.FreezerServices;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
 @RestController()
+@RequestMapping("/food")
 public class FoodInventoryController {
 
-    @GetMapping("/food")
-    public int saveFoodItem(){
+    @Autowired
+    private FreezerServices freezerServices;
 
-        return 1;
+    @PostMapping()
+    public Long saveFoodItem(@RequestBody FoodRequest foodRequest){
+        return freezerServices.saveFoodItem(foodRequest.getName(), foodRequest.getQuantity(), foodRequest.getType());
     }
 
-    @PostMapping("/food/search")
+    @GetMapping("/{id}")
+    public ResponseEntity<FoodRequest> getFoodRequestById(@PathVariable("id") Long id) throws Exception {
+        return new ResponseEntity<>(freezerServices.getFoodItemById(id), HttpStatus.OK);
+    }
+
+    @PostMapping("/search")
     public FreezerStorageItem getFoodItem(@RequestBody QuerySearch querySearch){
 
         return null;

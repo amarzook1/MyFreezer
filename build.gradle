@@ -19,20 +19,23 @@ repositories {
 }
 
 dependencies {
-	implementation 'org.springframework.boot:spring-boot-starter-security'
+//	implementation 'org.springframework.boot:spring-boot-starter-security'
 	implementation 'org.springframework.boot:spring-boot-starter-web'
 	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
 	implementation 'org.liquibase:liquibase-core'
-	implementation group: 'org.hibernate', name: 'hibernate-core', version: '5.6.8.Final'
+	implementation group: 'net.bytebuddy', name: 'byte-buddy-dep', version: '1.12.10'
+	implementation 'org.jetbrains:annotations:19.0.0'
 
 	compileOnly 'org.projectlombok:lombok'
 	runtimeOnly 'org.postgresql:postgresql'
 	annotationProcessor 'org.projectlombok:lombok'
+
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
-	testImplementation 'org.springframework.security:spring-security-test'
+//	testImplementation 'org.springframework.security:spring-security-test'
 	testImplementation 'org.junit.jupiter:junit-jupiter-api:5.8.1'
 	testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.8.1'
-	testImplementation group: 'org.mockito', name: 'mockito-core', version: '4.5.1'
+	testImplementation group: 'org.junit.platform', name: 'junit-platform-runner', version: '1.8.2'
+
 }
 
 tasks.named('test') {
