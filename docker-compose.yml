@@ -7,6 +7,8 @@ services:
       - 8085:8080
     depends_on:
       - "database"
+    environment:
+      - POSTGRES_DATABASE_URL=jdbc:postgresql://database:5432/storage_db
     networks:
       - storage_db_network
   database:
@@ -25,6 +27,8 @@ services:
         - 5434:5432
     volumes:
       - database-data:/var/lib/postgresql/data/ # persist data even if container shuts down
+    networks:
+      - storage_db_network
     labels:
       author: "Ahmed Marzook"
 volumes:
