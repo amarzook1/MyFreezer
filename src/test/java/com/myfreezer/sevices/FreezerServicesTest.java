@@ -32,10 +32,10 @@ public class FreezerServicesTest {
     @Captor
     ArgumentCaptor<FreezerStorageItem> freezerStorageItemArgumentCaptor;
 
-    private String name = "Apple";
-    private String type = "Fruit";
-    private Integer quantity = 100;
-    private Long id = 20L;
+    private final String name = "Apple";
+    private final String type = "Fruit";
+    private final Integer quantity = 100;
+    private final Long id = 20L;
 
     private FreezerStorageItem createFreezerStorageItem(){
         FreezerStorageItem freezerStorageItem = new FreezerStorageItem();
@@ -92,7 +92,7 @@ public class FreezerServicesTest {
 
         //Test
         Exception exception = assertThrows(NotFoundException.class, () ->
-        {freezerServices.getFoodItemById(this.id);});
+                freezerServices.getFoodItemById(this.id));
 
         //Verify
         String message = exception.getMessage();
@@ -149,7 +149,7 @@ public class FreezerServicesTest {
 
         //Test
         Exception exception = assertThrows(NotFoundException.class, () ->
-        {freezerServices.updateFoodItem(this.id, foodRequest);});
+        freezerServices.updateFoodItem(this.id, foodRequest));
 
         //Verify
         String message = exception.getMessage();
