@@ -8,24 +8,27 @@ import com.myfreezer.repositories.FoodItemRepository;
 import lombok.NoArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Example;
 import org.springframework.stereotype.Service;
 
-import java.util.Optional;
+import java.util.List;
+import java.util.stream.Collectors;
 
 
-@Service @NoArgsConstructor
+@Service
+@NoArgsConstructor
 public class FreezerServices {
 
     @Autowired
     private FoodItemRepository foodItemRepository;
 
-    public Long saveFoodItem(String name, Integer quantity, String type){
+    public Long saveFoodItem(String name, Integer quantity, String type) {
 
         FreezerStorageItem freezerStorageItem = new FreezerStorageItem();
         freezerStorageItem.setName(name);
         freezerStorageItem.setQuantity(quantity);
         freezerStorageItem.setType(type);
-       return foodItemRepository.save(freezerStorageItem).getFreezerStorageItemId();
+        return foodItemRepository.save(freezerStorageItem).getFreezerStorageItemId();
     }
 
     public FoodRequest getFoodItemById(Long id) throws NotFoundException {
@@ -36,10 +39,10 @@ public class FreezerServices {
     public Long updateFoodItem(Long id, FoodRequest foodRequest) throws NotFoundException {
         FreezerStorageItem freezerStorageItem = getFreezerStorageItem(id);
 
-        if(!StringUtils.isBlank(foodRequest.getType())) {
+        if (!StringUtils.isBlank(foodRequest.getType())) {
             freezerStorageItem.setType(foodRequest.getType());
         }
-        if(!StringUtils.isBlank(foodRequest.getName())) {
+        if (!StringUtils.isBlank(foodRequest.getName())) {
             freezerStorageItem.setName(foodRequest.getName());
         }
 
@@ -54,8 +57,15 @@ public class FreezerServices {
         return foodItemRepository.findById(id).orElseThrow(() -> new NotFoundException("The Id provided " + id + " does not match any item in the system"));
     }
 
-    public FreezerStorageItem searchStorage(QuerySearch querySearch){
-        return null;
+    public List<FoodRequest> searchStorage(QuerySearch querySearch) {
+        FreezerStorageItem freezerStorageItem = new FreezerStorageItem().builder()
+                .name(querySearch.getName())
+                .type(querySearch.getType())
+                .creationDate(querySearch.getCreationDate())
+                .build();
+        List<FoodRequest> searchResults = foodItemRepository.findAll(Example.of(freezerStorageItem))
+                .stream().map(i -> new FoodRequest(i)).collect(Collectors.toList());
+        return searchResults;
     }
 
 }

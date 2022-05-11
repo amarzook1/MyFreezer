@@ -1,15 +1,18 @@
 package com.myfreezer.entities;
 
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import javax.persistence.*;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Data
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
@@ -36,6 +39,6 @@ public class FreezerStorageItem {
 
     @CreationTimestamp
     @Column(name="creation_date", nullable=false, unique=false)
-    private LocalDateTime creationDate;
+    private LocalDate creationDate;
 
 }

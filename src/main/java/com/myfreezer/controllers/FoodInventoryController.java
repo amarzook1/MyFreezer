@@ -10,6 +10,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController()
 @RequestMapping("/food")
 public class FoodInventoryController {
@@ -34,8 +36,7 @@ public class FoodInventoryController {
     }
 
     @PostMapping("/search")
-    public FreezerStorageItem getFoodItem(@RequestBody QuerySearch querySearch){
-
-        return null;
+    public ResponseEntity<List<FoodRequest>> getFoodItem(@RequestBody QuerySearch querySearch){
+        return new ResponseEntity<>(freezerServices.searchStorage(querySearch), HttpStatus.OK);
     }
 }
