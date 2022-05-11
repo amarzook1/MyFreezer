@@ -6,6 +6,7 @@ import com.myfreezer.models.FoodRequest;
 import com.myfreezer.models.QuerySearch;
 import com.myfreezer.repositories.FoodItemRepository;
 import lombok.NoArgsConstructor;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -28,12 +29,29 @@ public class FreezerServices {
     }
 
     public FoodRequest getFoodItemById(Long id) throws NotFoundException {
-        Optional<FreezerStorageItem> foodItems = foodItemRepository.findById(id);
-        if(foodItems.isPresent()) {
-            return new FoodRequest(foodItems.get());
-        } else {
-            throw new NotFoundException("The Id provided " + id + " does not match any item in the system");
+        FreezerStorageItem foodItem = getFreezerStorageItem(id);
+        return new FoodRequest(foodItem);
+    }
+
+    public Long updateFoodItem(Long id, FoodRequest foodRequest) throws NotFoundException {
+        FreezerStorageItem freezerStorageItem = getFreezerStorageItem(id);
+
+        if(!StringUtils.isBlank(foodRequest.getType())) {
+            freezerStorageItem.setType(foodRequest.getType());
         }
+        if(!StringUtils.isBlank(foodRequest.getName())) {
+            freezerStorageItem.setName(foodRequest.getName());
+        }
+
+        if (foodRequest.getQuantity() != null) {
+            freezerStorageItem.setQuantity(foodRequest.getQuantity());
+        }
+
+        return foodItemRepository.save(freezerStorageItem).getFreezerStorageItemId();
+    }
+
+    private FreezerStorageItem getFreezerStorageItem(Long id) throws NotFoundException {
+        return foodItemRepository.findById(id).orElseThrow(() -> new NotFoundException("The Id provided " + id + " does not match any item in the system"));
     }
 
     public FreezerStorageItem searchStorage(QuerySearch querySearch){

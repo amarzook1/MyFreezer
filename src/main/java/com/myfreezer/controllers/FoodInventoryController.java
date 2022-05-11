@@ -23,8 +23,14 @@ public class FoodInventoryController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<FoodRequest> getFoodRequestById(@PathVariable("id") Long id) throws Exception {
+    public ResponseEntity<FoodRequest> getFoodRequestById(@PathVariable("id") Long id) throws NotFoundException {
         return new ResponseEntity<>(freezerServices.getFoodItemById(id), HttpStatus.OK);
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<Long> updateFoodItem(@PathVariable(value = "id") Long id,
+                                               @RequestBody FoodRequest foodRequest) throws NotFoundException {
+        return new ResponseEntity<>(freezerServices.updateFoodItem(id, foodRequest), HttpStatus.OK);
     }
 
     @PostMapping("/search")
