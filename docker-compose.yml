@@ -9,6 +9,7 @@ services:
       - "database"
     environment:
       - POSTGRES_DATABASE_URL=jdbc:postgresql://database:5432/storage_db
+      - API_TOKEN_VALUE=pa55word
     networks:
       - storage_db_network
   database:
