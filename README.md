@@ -9,3 +9,7 @@ All-in-one clean and restart from scratch:
 ```
 docker-compose down -v && ./gradlew clean build && docker-compose up -d --build
 ```
+
+headers:
+Key - API_TOKEN
+Value - pa55word
