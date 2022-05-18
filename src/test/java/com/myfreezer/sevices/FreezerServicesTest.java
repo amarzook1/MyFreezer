@@ -3,8 +3,10 @@ package com.myfreezer.sevices;
 import com.myfreezer.entities.FreezerStorageItem;
 import com.myfreezer.exceptions.NotFoundException;
 import com.myfreezer.models.FoodRequest;
+import com.myfreezer.models.QuerySearch;
 import com.myfreezer.repositories.FoodItemRepository;
 import com.myfreezer.services.FreezerServices;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -13,7 +15,13 @@ import org.mockito.Captor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.mockito.junit.jupiter.MockitoSettings;
+import org.mockito.quality.Strictness;
+import org.springframework.data.domain.Example;
 
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -36,6 +44,7 @@ public class FreezerServicesTest {
     private final String type = "Fruit";
     private final Integer quantity = 100;
     private final Long id = 20L;
+    private final LocalDate createdDate = LocalDate.of(2020, 2, 19);
 
     private FreezerStorageItem createFreezerStorageItem(){
         FreezerStorageItem freezerStorageItem = new FreezerStorageItem();
@@ -43,6 +52,7 @@ public class FreezerServicesTest {
         freezerStorageItem.setQuantity(quantity);
         freezerStorageItem.setName(name);
         freezerStorageItem.setFreezerStorageItemId(id);
+        freezerStorageItem.setCreationDate(this.createdDate);
 
         return freezerStorageItem;
     }
@@ -237,6 +247,43 @@ public class FreezerServicesTest {
                 () -> assertEquals(this.quantity, capturedFreezerStorageItem.getQuantity())
         );
         assertEquals(this.id, actualItemId);
+    }
+
+    @MockitoSettings(strictness = Strictness.LENIENT) //Stubbing warning due to .findAll()
+    @Test
+    void testSearchFoodItem(){
+        //Setup
+        QuerySearch querySearch = new QuerySearch();
+        querySearch.setName(this.name);
+        querySearch.setType(this.type);
+        querySearch.setCreationDate(this.createdDate);
+
+        FoodRequest foodRequest = new FoodRequest();
+        foodRequest.setType(this.type);
+        foodRequest.setName(this.name);
+        foodRequest.setQuantity(this.quantity);
+        foodRequest.setCreationDate(this.createdDate);
+
+        FreezerStorageItem freezerStorageItem = createFreezerStorageItem();
+
+        List<FreezerStorageItem> freezerStorageItemList = new ArrayList<>();
+        freezerStorageItemList.add(freezerStorageItem);
+
+        when(mockFoodItemRepo.findAll(any(Example.class))).thenReturn(freezerStorageItemList);
+
+        //Test
+        List<FoodRequest> actualSearchList = freezerServices.searchStorage(querySearch);
+        System.out.println(actualSearchList.size());
+        FoodRequest actualFoodRequest = actualSearchList.get(0);
+
+        //Verify
+        assertAll("Updated Database Entity",
+                () -> assertEquals(this.name, actualFoodRequest.getName()),
+                () -> assertEquals(this.type, actualFoodRequest.getType()),
+                () -> assertEquals(this.quantity, actualFoodRequest.getQuantity()),
+                () -> assertEquals(this.createdDate, actualFoodRequest.getCreationDate())
+        );
+        verify(mockFoodItemRepo, times(1)).findAll(any(Example.class));
     }
 
 }
