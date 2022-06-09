@@ -3,6 +3,7 @@ package com.myfreezer.controllers;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
+import com.myfreezer.configure.BaseTest;
 import com.myfreezer.entities.FreezerStorageItem;
 import com.myfreezer.models.FoodRequest;
 import com.myfreezer.repositories.FoodItemRepository;
@@ -24,32 +25,13 @@ import org.testcontainers.junit.jupiter.Testcontainers;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-//@Testcontainers
-@SpringBootTest()
-@AutoConfigureMockMvc
-public class FoodInventoryControllerTest {
+public class FoodInventoryControllerTest extends BaseTest {
 
     @Autowired
     private FoodItemRepository foodItemRepository;
 
     @Autowired
     private MockMvc mockMvc;
-
-    //Make Sure testcontainers.reuse.enable=true is set in your home directory in .testcontainer.properties
-//    @Container
-    private static PostgreSQLContainer postgreSQLContainer = (PostgreSQLContainer) new PostgreSQLContainer("postgres:14.2-alpine").withReuse(true);
-
-    @DynamicPropertySource
-    public static void overideProps(DynamicPropertyRegistry registry){
-        registry.add("spring.datasource.url",postgreSQLContainer::getJdbcUrl);
-        registry.add("spring.datasource.username",postgreSQLContainer::getUsername);
-        registry.add("spring.datasource.password",postgreSQLContainer::getPassword);
-    }
-
-    @BeforeAll
-    public static void setUp(){
-        postgreSQLContainer.start();
-    }
 
     @Test
     void saveFoodItem() throws Exception {
@@ -61,7 +43,7 @@ public class FoodInventoryControllerTest {
                 .header("API_TOKEN" , "password")
                 .content(json)
                 .contentType(MediaType.APPLICATION_JSON)
-                .accept(MediaType.APPLICATION_JSON));
+                .accept(MediaType.APPLICATION_JSON)).andDo(print());
 
         resultActions.andExpect(status().isOk());
     }
