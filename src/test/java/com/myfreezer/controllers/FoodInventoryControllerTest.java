@@ -51,9 +51,9 @@ public class FoodInventoryControllerTest extends BaseTest {
     @Test
     void getFoodItemById() throws Exception {
         FreezerStorageItem freezerStorageItem = new FreezerStorageItem().builder().name("Mango").quantity(10).type("Fruit").build();
-        foodItemRepository.save(freezerStorageItem);
+        Long dbId = foodItemRepository.save(freezerStorageItem).getFreezerStorageItemId();
 
-        ResultActions resultActions = mockMvc.perform(MockMvcRequestBuilders.get("/food/{id}", 1)
+        ResultActions resultActions = mockMvc.perform(MockMvcRequestBuilders.get("/food/{id}", dbId)
                 .header("API_TOKEN" , "password")
                 .accept(MediaType.APPLICATION_JSON)).andDo(print());
 
