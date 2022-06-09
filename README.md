@@ -6,8 +6,13 @@ Inventory Management System
 ### Build application
 You may need Java 8 installed on your system to run
 To build the application:
+Unix:
 ```
 ./gradlew build
+```
+Windows:
+```
+.\gradlew.bat build
 ```
 This generates the deployable `MyFreezer-0.0.1-SNAPSHOT.jar` in `build/libs`.
 
