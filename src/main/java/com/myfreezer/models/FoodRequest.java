@@ -7,8 +7,9 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotBlank;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 
 @Data
 @Builder
@@ -18,10 +19,13 @@ public class FoodRequest {
 
     private Long foodId;
 
+    @NotBlank
     private String name;
 
+    @NotBlank
     private String type;
 
+    @Min(value = 1, message = "Quantity should be at least 1")
     private Integer quantity;
 
     @JsonProperty("date")

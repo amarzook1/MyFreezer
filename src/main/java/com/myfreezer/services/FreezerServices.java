@@ -29,13 +29,12 @@ public class FreezerServices {
      * @param type
      * @return Id of saved item
      */
-    public Long saveFoodItem(String name, Integer quantity, String type) {
-
+    public FoodRequest saveFoodItem(String name, Integer quantity, String type) {
         FreezerStorageItem freezerStorageItem = new FreezerStorageItem();
         freezerStorageItem.setName(name);
         freezerStorageItem.setQuantity(quantity);
         freezerStorageItem.setType(type);
-        return foodItemRepository.save(freezerStorageItem).getFreezerStorageItemId();
+        return new FoodRequest(foodItemRepository.save(freezerStorageItem));
     }
 
     /**
@@ -58,7 +57,7 @@ public class FreezerServices {
      * @return Id of updated item
      * @throws NotFoundException
      */
-    public Long updateFoodItem(Long id, FoodRequest foodRequest) throws NotFoundException {
+    public FoodRequest updateFoodItem(Long id, FoodRequest foodRequest) throws NotFoundException {
         FreezerStorageItem freezerStorageItem = getFreezerStorageItem(id);
 
         if (!StringUtils.isBlank(foodRequest.getType())) {
@@ -72,7 +71,7 @@ public class FreezerServices {
             freezerStorageItem.setQuantity(foodRequest.getQuantity());
         }
 
-        return foodItemRepository.save(freezerStorageItem).getFreezerStorageItemId();
+        return new FoodRequest(foodItemRepository.save(freezerStorageItem));
     }
 
     /**

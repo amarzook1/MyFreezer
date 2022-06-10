@@ -6,7 +6,6 @@ import com.myfreezer.models.FoodRequest;
 import com.myfreezer.models.QuerySearch;
 import com.myfreezer.repositories.FoodItemRepository;
 import com.myfreezer.services.FreezerServices;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -46,7 +45,7 @@ public class FreezerServicesTest {
     private final Long id = 20L;
     private final LocalDate createdDate = LocalDate.of(2020, 2, 19);
 
-    private FreezerStorageItem createFreezerStorageItem(){
+    private FreezerStorageItem createFreezerStorageItem() {
         FreezerStorageItem freezerStorageItem = new FreezerStorageItem();
         freezerStorageItem.setType(type);
         freezerStorageItem.setQuantity(quantity);
@@ -58,17 +57,17 @@ public class FreezerServicesTest {
     }
 
     @Test
-    void testSaveFoodItem(){
+    void testSaveFoodItem() {
         //Setup
         FreezerStorageItem freezerStorageItem = createFreezerStorageItem();
 
         when(mockFoodItemRepo.save(any())).thenReturn(freezerStorageItem);
 
         //Test
-        Long actualItemId = freezerServices.saveFoodItem(name,quantity,type);
+        Long actualItemId = freezerServices.saveFoodItem(name, quantity, type).getFoodId();
 
         //Verify
-        assertEquals(this.id,actualItemId);
+        assertEquals(this.id, actualItemId);
         verify(mockFoodItemRepo, times(1)).save(any());
     }
 
@@ -130,14 +129,14 @@ public class FreezerServicesTest {
         when(mockFoodItemRepo.save(freezerStorageItemArgumentCaptor.capture())).thenReturn(freezerStorageItem);
 
         //Test
-        Long actualItemId = freezerServices.updateFoodItem(this.id, foodRequest);
+        Long actualItemId = freezerServices.updateFoodItem(this.id, foodRequest).getFoodId();
         FreezerStorageItem capturedFreezerStorageItem = freezerStorageItemArgumentCaptor.getValue();
         //Verify
         assertAll("Updated Database Entity",
                 () -> assertEquals(updatedName, capturedFreezerStorageItem.getName()),
                 () -> assertEquals(updatedType, capturedFreezerStorageItem.getType()),
                 () -> assertEquals(updatedQuantity, capturedFreezerStorageItem.getQuantity())
-                );
+        );
         assertEquals(this.id, actualItemId);
     }
 
@@ -159,7 +158,7 @@ public class FreezerServicesTest {
 
         //Test
         Exception exception = assertThrows(NotFoundException.class, () ->
-        freezerServices.updateFoodItem(this.id, foodRequest));
+                freezerServices.updateFoodItem(this.id, foodRequest));
 
         //Verify
         String message = exception.getMessage();
@@ -184,7 +183,7 @@ public class FreezerServicesTest {
         when(mockFoodItemRepo.save(freezerStorageItemArgumentCaptor.capture())).thenReturn(freezerStorageItem);
 
         //Test
-        Long actualItemId = freezerServices.updateFoodItem(this.id, foodRequest);
+        Long actualItemId = freezerServices.updateFoodItem(this.id, foodRequest).getFoodId();
         FreezerStorageItem capturedFreezerStorageItem = freezerStorageItemArgumentCaptor.getValue();
         //Verify
         assertAll("Updated Database Entity",
@@ -211,7 +210,7 @@ public class FreezerServicesTest {
         when(mockFoodItemRepo.save(freezerStorageItemArgumentCaptor.capture())).thenReturn(freezerStorageItem);
 
         //Test
-        Long actualItemId = freezerServices.updateFoodItem(this.id, foodRequest);
+        Long actualItemId = freezerServices.updateFoodItem(this.id, foodRequest).getFoodId();
         FreezerStorageItem capturedFreezerStorageItem = freezerStorageItemArgumentCaptor.getValue();
         //Verify
         assertAll("Updated Database Entity",
@@ -238,7 +237,7 @@ public class FreezerServicesTest {
         when(mockFoodItemRepo.save(freezerStorageItemArgumentCaptor.capture())).thenReturn(freezerStorageItem);
 
         //Test
-        Long actualItemId = freezerServices.updateFoodItem(this.id, foodRequest);
+        Long actualItemId = freezerServices.updateFoodItem(this.id, foodRequest).getFoodId();
         FreezerStorageItem capturedFreezerStorageItem = freezerStorageItemArgumentCaptor.getValue();
         //Verify
         assertAll("Updated Database Entity",
@@ -251,7 +250,7 @@ public class FreezerServicesTest {
 
     @MockitoSettings(strictness = Strictness.LENIENT) //Stubbing warning due to .findAll()
     @Test
-    void testSearchFoodItem(){
+    void testSearchFoodItem() {
         //Setup
         QuerySearch querySearch = new QuerySearch();
         querySearch.setName(this.name);
