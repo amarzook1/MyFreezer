@@ -1,7 +1,7 @@
 package com.myfreezer.services;
 
 import com.myfreezer.entities.FreezerStorageItem;
-import com.myfreezer.exceptions.NotFoundException;
+import com.myfreezer.exceptions.NoDataFoundException;
 import com.myfreezer.models.FoodRequest;
 import com.myfreezer.models.QuerySearch;
 import com.myfreezer.repositories.FoodItemRepository;
@@ -41,9 +41,9 @@ public class FreezerServices {
      * Get a saved food item from the DB by ID
      * @param id
      * @return Food item from DB
-     * @throws NotFoundException
+     * @throws NoDataFoundException
      */
-    public FoodRequest getFoodItemById(Long id) throws NotFoundException {
+    public FoodRequest getFoodItemById(Long id) throws NoDataFoundException {
         FreezerStorageItem foodItem = getFreezerStorageItem(id);
         return new FoodRequest(foodItem);
     }
@@ -55,9 +55,9 @@ public class FreezerServices {
      * @param id
      * @param foodRequest
      * @return Id of updated item
-     * @throws NotFoundException
+     * @throws NoDataFoundException
      */
-    public FoodRequest updateFoodItem(Long id, FoodRequest foodRequest) throws NotFoundException {
+    public FoodRequest updateFoodItem(Long id, FoodRequest foodRequest) throws NoDataFoundException {
         FreezerStorageItem freezerStorageItem = getFreezerStorageItem(id);
 
         if (!StringUtils.isBlank(foodRequest.getType())) {
@@ -78,10 +78,10 @@ public class FreezerServices {
      * Method to get a food item by ID from the DB
      * @param id
      * @return DB entity
-     * @throws NotFoundException
+     * @throws NoDataFoundException
      */
-    private FreezerStorageItem getFreezerStorageItem(Long id) throws NotFoundException {
-        return foodItemRepository.findById(id).orElseThrow(() -> new NotFoundException("The Id provided " + id + " does not match any item in the system"));
+    private FreezerStorageItem getFreezerStorageItem(Long id) throws NoDataFoundException {
+        return foodItemRepository.findById(id).orElseThrow(() -> new NoDataFoundException("The Id provided " + id + " does not match any item in the system"));
     }
     /**
      * Search food item with the values given by the user not all the values are needed

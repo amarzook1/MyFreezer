@@ -1,7 +1,7 @@
 package com.myfreezer.sevices;
 
 import com.myfreezer.entities.FreezerStorageItem;
-import com.myfreezer.exceptions.NotFoundException;
+import com.myfreezer.exceptions.NoDataFoundException;
 import com.myfreezer.models.FoodRequest;
 import com.myfreezer.models.QuerySearch;
 import com.myfreezer.repositories.FoodItemRepository;
@@ -72,7 +72,7 @@ public class FreezerServicesTest {
     }
 
     @Test
-    void testGetFoodItemExist() throws NotFoundException {
+    void testGetFoodItemExist() throws NoDataFoundException {
         //Setup
         FreezerStorageItem freezerStorageItem = createFreezerStorageItem();
         Optional<FreezerStorageItem> optionalFreezerStorageItem = Optional.of(freezerStorageItem);
@@ -100,7 +100,7 @@ public class FreezerServicesTest {
         when(mockFoodItemRepo.findById(this.id)).thenReturn(emptyOptional);
 
         //Test
-        Exception exception = assertThrows(NotFoundException.class, () ->
+        Exception exception = assertThrows(NoDataFoundException.class, () ->
                 freezerServices.getFoodItemById(this.id));
 
         //Verify
@@ -111,7 +111,7 @@ public class FreezerServicesTest {
     }
 
     @Test
-    void testUpdateFoodItemAllEntries() throws NotFoundException {
+    void testUpdateFoodItemAllEntries() throws NoDataFoundException {
         //Setup
         String updatedName = "bapple";
         String updatedType = "Despicable";
@@ -157,7 +157,7 @@ public class FreezerServicesTest {
         when(mockFoodItemRepo.findById(this.id)).thenReturn(emptyOptional);
 
         //Test
-        Exception exception = assertThrows(NotFoundException.class, () ->
+        Exception exception = assertThrows(NoDataFoundException.class, () ->
                 freezerServices.updateFoodItem(this.id, foodRequest));
 
         //Verify
@@ -169,7 +169,7 @@ public class FreezerServicesTest {
 
     @Test
     @DisplayName("Update only Quantity")
-    void testUpdateFoodItemPartialOne() throws NotFoundException {
+    void testUpdateFoodItemPartialOne() throws NoDataFoundException {
         //Setup
         Integer updatedQuantity = 23;
 
@@ -196,7 +196,7 @@ public class FreezerServicesTest {
 
     @Test
     @DisplayName("Update only Name")
-    void testUpdateFoodItemPartialTwo() throws NotFoundException {
+    void testUpdateFoodItemPartialTwo() throws NoDataFoundException {
         //Setup
         String updatedName = "bapple";
 
@@ -223,7 +223,7 @@ public class FreezerServicesTest {
 
     @Test
     @DisplayName("Update only Types")
-    void testUpdateFoodItemPartialThree() throws NotFoundException {
+    void testUpdateFoodItemPartialThree() throws NoDataFoundException {
         //Setup
         String updatedType = "Despicable";
 

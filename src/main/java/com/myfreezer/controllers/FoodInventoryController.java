@@ -1,6 +1,6 @@
 package com.myfreezer.controllers;
 
-import com.myfreezer.exceptions.NotFoundException;
+import com.myfreezer.exceptions.NoDataFoundException;
 import com.myfreezer.models.FoodRequest;
 import com.myfreezer.models.QuerySearch;
 import com.myfreezer.services.FreezerServices;
@@ -27,14 +27,14 @@ public class FoodInventoryController {
 
     @GetMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
-    public FoodRequest getFoodRequestById(@PathVariable("id") @NotNull Long id) throws NotFoundException {
+    public FoodRequest getFoodRequestById(@PathVariable("id") @NotNull Long id) throws NoDataFoundException {
         return freezerServices.getFoodItemById(id);
     }
 
     @PutMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public FoodRequest updateFoodItem(@PathVariable(value = "id") Long id,
-                                               @RequestBody FoodRequest foodRequest) throws NotFoundException {
+                                               @RequestBody FoodRequest foodRequest) throws NoDataFoundException {
         return freezerServices.updateFoodItem(id, foodRequest);
     }
 
