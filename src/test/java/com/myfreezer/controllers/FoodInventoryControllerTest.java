@@ -63,11 +63,9 @@ public class FoodInventoryControllerTest extends BaseTest {
     }
 
     @Test
+    @Sql({"/createFreezerStorageItem.sql"})
     void getFoodItemById() throws Exception {
-        FreezerStorageItem freezerStorageItem = new FreezerStorageItem().builder().name("Mango").quantity(10).type("Fruit").build();
-        Long dbId = foodItemRepository.save(freezerStorageItem).getFreezerStorageItemId();
-
-        ResultActions resultActions = mockMvc.perform(MockMvcRequestBuilders.get("/food/{id}", dbId)
+        ResultActions resultActions = mockMvc.perform(MockMvcRequestBuilders.get("/food/{id}", 10)
                 .header("API_TOKEN", "password")
                 .accept(MediaType.APPLICATION_JSON)).andDo(print());
 
@@ -90,5 +88,7 @@ public class FoodInventoryControllerTest extends BaseTest {
                 .andExpect(MockMvcResultMatchers.jsonPath("$.error").value(404))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.message").value("The Id provided "+ dbId + " does not match any item in the system"));
     }
+
+
 
 }
