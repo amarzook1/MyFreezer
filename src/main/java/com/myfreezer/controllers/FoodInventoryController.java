@@ -27,7 +27,7 @@ public class FoodInventoryController {
 
     @GetMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
-    public FoodRequest getFoodRequestById(@PathVariable("id") @NotNull Long id) throws NoDataFoundException {
+    public FoodRequest getFoodRequestById(@PathVariable("id") @NotNull(message = "Id Value needs to be present") Long id) throws NoDataFoundException {
         return freezerServices.getFoodItemById(id);
     }
 
