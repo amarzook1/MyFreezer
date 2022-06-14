@@ -89,6 +89,82 @@ public class FoodInventoryControllerTest extends BaseTest {
                 .andExpect(MockMvcResultMatchers.jsonPath("$.message").value("The Id provided "+ dbId + " does not match any item in the system"));
     }
 
+    @Test
+    @Sql({"/createFreezerStorageItem.sql"})
+    void updateFoodItemByIdIfExistOnlyQuantity() throws Exception {
+        FoodRequest foodRequest = new FoodRequest().builder().quantity(12).build();
+        ObjectWriter ow = new ObjectMapper().writer().withDefaultPrettyPrinter();
+        String json = ow.writeValueAsString(foodRequest);
 
+        ResultActions resultActions = mockMvc.perform(MockMvcRequestBuilders.put("/food/{id}", 10)
+                .header("API_TOKEN", "password")
+                .content(json)
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON)).andDo(print());
+
+        resultActions.andExpect(status().isNoContent())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.name").value("Mango"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.type").value("Fruit"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.quantity").value(12));
+    }
+
+    @Test
+    @Sql({"/createFreezerStorageItem.sql"})
+    void updateFoodItemByIdIfExistOnlyNameAndQuantity() throws Exception {
+        FoodRequest foodRequest = new FoodRequest().builder().quantity(4).name("Alphonso (mango)").build();
+        ObjectWriter ow = new ObjectMapper().writer().withDefaultPrettyPrinter();
+        String json = ow.writeValueAsString(foodRequest);
+
+        ResultActions resultActions = mockMvc.perform(MockMvcRequestBuilders.put("/food/{id}", 10)
+                .header("API_TOKEN", "password")
+                .content(json)
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON)).andDo(print());
+
+        resultActions.andExpect(status().isNoContent())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.name").value("Alphonso (mango)"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.type").value("Fruit"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.quantity").value(4));
+    }
+
+    @Test
+    @Sql({"/createFreezerStorageItem.sql"})
+    void updateFoodItemByIdIfExistOnlyType() throws Exception {
+        FoodRequest foodRequest = new FoodRequest().builder().type("Produce").build();
+        ObjectWriter ow = new ObjectMapper().writer().withDefaultPrettyPrinter();
+        String json = ow.writeValueAsString(foodRequest);
+
+        ResultActions resultActions = mockMvc.perform(MockMvcRequestBuilders.put("/food/{id}", 10)
+                .header("API_TOKEN", "password")
+                .content(json)
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON)).andDo(print());
+
+        resultActions.andExpect(status().isNoContent())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.name").value("Mango"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.type").value("Produce"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.quantity").value(10));
+    }
+
+    @Test
+    @Sql({"/createFreezerStorageItem.sql"})
+    void updateFoodItemByIdDoesNotExist() throws Exception {
+        Long dbId = new Random().nextLong();
+
+        FoodRequest foodRequest = new FoodRequest().builder().type("Produce").build();
+        ObjectWriter ow = new ObjectMapper().writer().withDefaultPrettyPrinter();
+        String json = ow.writeValueAsString(foodRequest);
+
+        ResultActions resultActions = mockMvc.perform(MockMvcRequestBuilders.put("/food/{id}", dbId)
+                .header("API_TOKEN", "password")
+                .content(json)
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON)).andDo(print());
+
+        resultActions.andExpect(status().isNotFound())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.status").value("NOT_FOUND"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.error").value(404))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.message").value("The Id provided "+ dbId + " does not match any item in the system"));
+    }
 
 }
