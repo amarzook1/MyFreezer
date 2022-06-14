@@ -86,8 +86,8 @@ public class FoodInventoryControllerTest extends BaseTest {
                 .accept(MediaType.APPLICATION_JSON)).andDo(print());
 
         resultActions.andExpect(status().isNotFound())
-                .andExpect(MockMvcResultMatchers.jsonPath("$.status").value(404))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.error").value("NOT_FOUND"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.status").value("NOT_FOUND"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.error").value(404))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.message").value("The Id provided "+ dbId + " does not match any item in the system"));
     }
 
