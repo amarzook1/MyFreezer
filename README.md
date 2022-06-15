@@ -1,6 +1,6 @@
 # MyFreezer
 
-Inventory Management System
+Inventory Management System with good Integration and Unit testing.
 
 ## Setup
 ### Build application
