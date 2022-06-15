@@ -24,4 +24,11 @@ public class ApiError {
         this.path = request.getRequestURL().toString();
     }
 
+    public ApiError(Exception ex, HttpStatus httpStatus) {
+        this.timestamp = LocalDateTime.now().toString();
+        this.error = httpStatus.value();
+        this.status = httpStatus;
+        this.message = ex.getMessage();
+    }
+
 }

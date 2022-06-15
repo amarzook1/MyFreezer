@@ -7,6 +7,8 @@ import com.myfreezer.models.QuerySearch;
 import com.myfreezer.repositories.FoodItemRepository;
 import lombok.NoArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Example;
 import org.springframework.stereotype.Service;
@@ -18,6 +20,8 @@ import java.util.stream.Collectors;
 @Service
 @NoArgsConstructor
 public class FreezerServices {
+
+    private static Logger logger = LogManager.getLogger(FreezerServices.class);
 
     @Autowired
     private FoodItemRepository foodItemRepository;
@@ -34,6 +38,9 @@ public class FreezerServices {
         freezerStorageItem.setName(name);
         freezerStorageItem.setQuantity(quantity);
         freezerStorageItem.setType(type);
+
+        logger.info("Saving Item to Freezer Storage - Name: {} Quantity: {} Type {}", name, quantity, type);
+
         return new FoodRequest(foodItemRepository.save(freezerStorageItem));
     }
 
@@ -45,6 +52,7 @@ public class FreezerServices {
      */
     public FoodRequest getFoodItemById(Long id) throws NoDataFoundException {
         FreezerStorageItem foodItem = getFreezerStorageItem(id);
+        logger.info("Fetching Item ID {} from Freezer Storage - Name: {} Quantity: {} Type {}", id, foodItem.getName(), foodItem.getQuantity(), foodItem.getType());
         return new FoodRequest(foodItem);
     }
 
@@ -71,6 +79,7 @@ public class FreezerServices {
             freezerStorageItem.setQuantity(foodRequest.getQuantity());
         }
 
+        logger.info("Updating freezer storage item ID: {}. Updated Item: {}, Before Update: {}", id, freezerStorageItem.toString(), foodRequest.toString());
         return new FoodRequest(foodItemRepository.save(freezerStorageItem));
     }
 
@@ -81,6 +90,7 @@ public class FreezerServices {
      * @throws NoDataFoundException
      */
     private FreezerStorageItem getFreezerStorageItem(Long id) throws NoDataFoundException {
+        logger.info("Fetching Food item by ID: {}", id);
         return foodItemRepository.findById(id).orElseThrow(() -> new NoDataFoundException("The Id provided " + id + " does not match any item in the system"));
     }
     /**
@@ -96,9 +106,10 @@ public class FreezerServices {
                 .type(querySearch.getType())
                 .creationDate(querySearch.getCreationDate())
                 .build();
+        logger.info("User is searching for food item: {}", querySearch.toString());
         List<FoodRequest> searchResults = foodItemRepository.findAll(Example.of(freezerStorageItem))
                 .stream().map(i -> new FoodRequest(i)).collect(Collectors.toList());
+        logger.info("Number of items found from search: {}", searchResults.size());
         return searchResults;
     }
-
 }
