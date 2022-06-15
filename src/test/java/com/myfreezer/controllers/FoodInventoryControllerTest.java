@@ -215,6 +215,11 @@ public class FoodInventoryControllerTest extends BaseTest {
     @Sql({"/createFreezerStorageItem.sql"})
     void searchForFoodItemIfExistByDateMultipleReturn() throws Exception {
         QuerySearch querySearch = new QuerySearch().builder().creationDate(LocalDate.parse("2022-06-14")).build();
+        /**
+         * Due to ERROR: Java 8 date/time type `java.time.LocalDate` not supported by default: add Module "com.fasterxml.jackson.datatype:jackson-datatype-jsr310" to enable handling
+         * I had to add a new module com.fasterxml.jackson.datatype:jackson-datatype-jsr310
+         * This allowed me Serialize Java 8 Date With Jackson from: https://www.baeldung.com/jackson-serialize-dates#java-8
+        **/
         ObjectWriter ow = new ObjectMapper().registerModule(new JavaTimeModule()).disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
                 .writer().withDefaultPrettyPrinter();
         String json = ow.writeValueAsString(querySearch);
