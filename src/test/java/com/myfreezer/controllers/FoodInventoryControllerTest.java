@@ -2,11 +2,13 @@ package com.myfreezer.controllers;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.myfreezer.configure.BaseTest;
-import com.myfreezer.entities.FreezerStorageItem;
 import com.myfreezer.models.FoodRequest;
+import com.myfreezer.models.QuerySearch;
 import com.myfreezer.repositories.FoodItemRepository;
-import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.jdbc.Sql;
@@ -15,12 +17,13 @@ import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
+import java.time.LocalDate;
 import java.util.Random;
 
+import static org.hamcrest.Matchers.hasSize;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@Sql({"/clearFreezerTable.sql"})
 public class FoodInventoryControllerTest extends BaseTest {
 
     @Autowired
@@ -86,7 +89,7 @@ public class FoodInventoryControllerTest extends BaseTest {
         resultActions.andExpect(status().isNotFound())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.status").value("NOT_FOUND"))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.error").value(404))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.message").value("The Id provided "+ dbId + " does not match any item in the system"));
+                .andExpect(MockMvcResultMatchers.jsonPath("$.message").value("The Id provided " + dbId + " does not match any item in the system"));
     }
 
     @Test
@@ -164,7 +167,84 @@ public class FoodInventoryControllerTest extends BaseTest {
         resultActions.andExpect(status().isNotFound())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.status").value("NOT_FOUND"))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.error").value(404))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.message").value("The Id provided "+ dbId + " does not match any item in the system"));
+                .andExpect(MockMvcResultMatchers.jsonPath("$.message").value("The Id provided " + dbId + " does not match any item in the system"));
     }
 
+    @Test
+    @Sql({"/createFreezerStorageItem.sql"})
+    void searchForFoodItemIfExistByName() throws Exception {
+        QuerySearch querySearch = new QuerySearch().builder().name("Ice Cream").build();
+        ObjectWriter ow = new ObjectMapper().writer().withDefaultPrettyPrinter();
+        String json = ow.writeValueAsString(querySearch);
+
+        ResultActions resultActions = mockMvc.perform(MockMvcRequestBuilders.post("/food/search")
+                .header("API_TOKEN", "password")
+                .content(json)
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON)).andDo(print());
+
+        resultActions.andExpect(status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.*", hasSize(1)))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.[0].foodId").value(12))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.[0].name").value("Ice Cream"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.[0].type").value("Dessert"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.[0].quantity").value(7))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.[0].date").value("2022-06-14"));
+    }
+
+    @Test
+    @Sql(scripts = {"/clearFreezerTable.sql", "/createFreezerStorageItem.sql"})
+    void searchForFoodItemIfExistByTypeMultipleReturn() throws Exception {
+        QuerySearch querySearch = new QuerySearch().builder().type("Fruit").build();
+        ObjectWriter ow = new ObjectMapper().writer().withDefaultPrettyPrinter();
+        String json = ow.writeValueAsString(querySearch);
+
+        ResultActions resultActions = mockMvc.perform(MockMvcRequestBuilders.post("/food/search")
+                .header("API_TOKEN", "password")
+                .content(json)
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON)).andDo(print());
+
+        resultActions.andExpect(status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.*", hasSize(2)))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.[0].type").value("Fruit"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.[1].type").value("Fruit"));
+    }
+
+    @Test
+    @Sql({"/createFreezerStorageItem.sql"})
+    void searchForFoodItemIfExistByDateMultipleReturn() throws Exception {
+        QuerySearch querySearch = new QuerySearch().builder().creationDate(LocalDate.parse("2022-06-14")).build();
+        ObjectWriter ow = new ObjectMapper().registerModule(new JavaTimeModule()).disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
+                .writer().withDefaultPrettyPrinter();
+        String json = ow.writeValueAsString(querySearch);
+
+        ResultActions resultActions = mockMvc.perform(MockMvcRequestBuilders.post("/food/search")
+                .header("API_TOKEN", "password")
+                .content(json)
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON)).andDo(print());
+
+        resultActions.andExpect(status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.*", hasSize(3)))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.[0].date").value("2022-06-14"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.[1].date").value("2022-06-14"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.[2].date").value("2022-06-14"));
+    }
+
+    @Test
+    void searchForFoodItemDoesNotExistByName() throws Exception {
+        QuerySearch querySearch = new QuerySearch().builder().name("Lobster").build();
+        ObjectWriter ow = new ObjectMapper().writer().withDefaultPrettyPrinter();
+        String json = ow.writeValueAsString(querySearch);
+
+        ResultActions resultActions = mockMvc.perform(MockMvcRequestBuilders.post("/food/search")
+                .header("API_TOKEN", "password")
+                .content(json)
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON)).andDo(print());
+
+        resultActions.andExpect(status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.*", hasSize(0)));
+    }
 }
