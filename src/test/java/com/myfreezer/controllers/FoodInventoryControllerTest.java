@@ -34,6 +34,9 @@ public class FoodInventoryControllerTest extends BaseTest {
 
     @Test
     void saveFoodItem() throws Exception {
+        /**
+         * Converting Pojo to JSON string and then adding it to the content to send as Post request
+         */
         FoodRequest foodRequest = new FoodRequest().builder().name("PineApple").type("Fruit").quantity(4).build();
         ObjectWriter ow = new ObjectMapper().writer().withDefaultPrettyPrinter();
         String json = ow.writeValueAsString(foodRequest);
@@ -163,7 +166,9 @@ public class FoodInventoryControllerTest extends BaseTest {
                 .content(json)
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON)).andDo(print());
-
+        /**
+         * Testing thrown custom exception
+         */
         resultActions.andExpect(status().isNotFound())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.status").value("NOT_FOUND"))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.error").value(404))
@@ -182,7 +187,9 @@ public class FoodInventoryControllerTest extends BaseTest {
                 .content(json)
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON)).andDo(print());
-
+        /**
+         * Testing return body of an Array e.g [{"foodId":12,"name":"Ice Cream","type":"Dessert","quantity":7,"date":"2022-06-14"}]
+         */
         resultActions.andExpect(status().isOk())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.*", hasSize(1)))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.[0].foodId").value(12))
