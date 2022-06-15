@@ -6,6 +6,11 @@ plugins {
 //	id "org.sonarqube" version "3.3"
 }
 
+def versions = [
+		jacksonVersion : '2.13.3',
+		testContainers : '1.17.2'
+]
+
 group = 'com.myfreezer'
 version = '0.0.1-SNAPSHOT'
 sourceCompatibility = '1.8'
@@ -13,6 +18,9 @@ sourceCompatibility = '1.8'
 configurations {
 	compileOnly {
 		extendsFrom annotationProcessor
+	}
+	all {
+		exclude group: 'org.springframework.boot', module: 'spring-boot-starter-logging'
 	}
 }
 
@@ -25,6 +33,7 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-web'
 	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
 	implementation 'org.springframework.boot:spring-boot-starter-validation'
+	implementation 'org.springframework.boot:spring-boot-starter-log4j2'
 
 	// https://mvnrepository.com/artifact/org.liquibase/liquibase-core
 	implementation group: 'org.liquibase', name: 'liquibase-core', version: '4.11.0'
@@ -34,8 +43,9 @@ dependencies {
 	// https://mvnrepository.com/artifact/com.google.guava/guava
 	implementation group: 'com.google.guava', name: 'guava', version: '31.1-jre'
 	// https://mvnrepository.com/artifact/com.fasterxml.jackson.datatype/jackson-datatype-jsr310
-	implementation group: 'com.fasterxml.jackson.datatype', name: 'jackson-datatype-jsr310', version: '2.13.3'
-
+	implementation group: 'com.fasterxml.jackson.datatype', name: 'jackson-datatype-jsr310', version: versions.jacksonVersion
+	// https://mvnrepository.com/artifact/com.fasterxml.jackson.dataformat/jackson-dataformat-yaml
+	implementation group: 'com.fasterxml.jackson.dataformat', name: 'jackson-dataformat-yaml', version: versions.jacksonVersion
 
 	compileOnly 'org.projectlombok:lombok'
 	runtimeOnly 'org.postgresql:postgresql'
@@ -47,9 +57,13 @@ dependencies {
 	testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.8.1'
 	testImplementation group: 'org.junit.platform', name: 'junit-platform-runner', version: '1.8.2'
 	//Integration Testing Container Database dependencies
-	testImplementation 'org.testcontainers:testcontainers:1.17.2'
-	testImplementation 'org.testcontainers:junit-jupiter:1.17.2'
-	testImplementation 'org.testcontainers:postgresql:1.17.2'
+	// https://mvnrepository.com/artifact/org.testcontainers/testcontainers
+	testImplementation group: 'org.testcontainers', name: 'testcontainers', version: versions.testContainers
+	// https://mvnrepository.com/artifact/org.testcontainers/junit-jupiter
+	testImplementation group: 'org.testcontainers', name: 'junit-jupiter', version: versions.testContainers
+	// https://mvnrepository.com/artifact/org.testcontainers/postgresql
+	testImplementation group: 'org.testcontainers', name: 'postgresql', version: versions.testContainers
+
 
 
 }
